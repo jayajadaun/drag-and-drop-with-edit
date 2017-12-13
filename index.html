@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Drag And Drop with Editing</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<link href="css/plugins/summernote/summernote.css" rel="stylesheet">
+<link href="css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<style type="text/css">
+.sim-row-edit{
+position: relative;
+background: transparent;
+} 
+.sim-row-edit-hover {
+height: 100%;
+width: 100%;
+background-color: rgba(63,141,191,0.8);
+position: absolute;
+left: 0px;
+top: 0px;
+cursor: default;
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+
+}
+h2{
+font-size:28px;
+}
+.sim-row-edit-hover i{
+position: absolute;
+height: 30px;
+width: 30px;
+line-height: 30px;
+left: 50%;
+top: 50%;
+text-align: center;
+margin-top: -15px;
+margin-left: -15px;
+color: rgba(255,255,255,1);
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+-webkit-border-radius: 50%;
+-moz-border-radius: 50%;
+border-radius: 50%;
+font-size: 16px;
+}
+.sim-row-edit-hover i:hover {
+background-color: rgba(0,0,0,0.5);
+cursor: pointer;
+}
+
+.sim-edit{
+height: 100%;
+width: 100%;
+position: fixed;
+z-index: 2;
+display: none;
+background-image: url(../_assets/background.png);
+background-repeat: repeat;
+}
+.sim-edit-box{
+width: 400px;
+background-color: rgba(255,255,255,1);
+margin-right: auto;
+margin-left: auto;
+margin-top: 10%;
+-webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+-moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.5);
+padding: 25px;
+height: 430px;
+display: none;
+}
+.sim-edit-box-title{
+float: left;
+width: 100%;
+font-size: 25px;
+color: rgba(153,153,153,1);
+}
+.sim-edit-box-content-text span {
+font-size: 13px;
+color: rgba(153,153,153,1);
+}
+
+.sim-edit-box-content{
+float: left;
+width: 100%;
+margin-top: 10px;
+}
+.sim-edit-box-content-text{
+float: left;
+width: 100%;
+font-size: 16px;
+color: rgba(102,102,102,1);
+font-weight: 600;
+margin-top: 15px;
+}
+.sim-edit-box-content-field{
+float: left;
+width: 100%;
+margin-top: 15px;
+}
+.sim-edit-box-content-field-input {
+float: left;
+height: 33px;
+width: 100%;
+border: 1px solid rgba(204,204,204,1);
+outline: none;
+font-family: inherit;
+padding-right: 10px;
+padding-left: 10px;
+font-size: 15px;
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+color: rgba(102,102,102,1);
+}
+.sim-edit-box-content-field-input:focus {
+-webkit-box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.2);
+-moz-box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.2);
+box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.2); 
+}
+.sim-edit-box-content-field-textarea {
+float: left;
+height: 180px;
+width: 380px;
+border: 1px solid rgba(204,204,204,1);
+outline: none;
+font-family: inherit;
+font-size: 15px;
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+color: rgba(102,102,102,1);
+resize: none;
+padding: 10px;
+}
+.sim-edit-box-content-field-textarea:focus {
+-webkit-box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.2);
+-moz-box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.2);
+box-shadow: inset 0px 0px 10px 0px rgba(0,0,0,0.2); 
+}
+.sim-edit-box-content-icons {
+float: left;
+height: 388px;
+width: 388px;
+border: 1px solid rgba(204,204,204,1);
+margin-top: 15px;
+overflow-y: scroll;
+}
+.sim-edit-box-content-icons i {
+line-height: 50px;
+background-color: rgba(225,225,225,1);
+float: left;
+height: 50px;
+width: 50px;
+margin-top: 10px;
+margin-left: 10px;
+text-align: center;
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+font-size: 28px;
+color: rgba(51,51,51,1);
+}
+.sim-edit-box-content-icons i:hover {
+cursor: pointer;
+background-color: rgba(153,153,153,1);
+-webkit-border-radius: 50%;
+-moz-border-radius: 50%;
+border-radius: 50%;
+color: rgba(0,0,0,1);
+}
+.sim-edit-box-buttons{
+float: left;
+width: 100%;
+margin-top: 35px;
+}
+.sim-edit-box-buttons-save{
+background-color: rgba(63,141,191,1);
+height: 35px;
+text-align: center;
+line-height: 35px;
+color: rgba(255,255,255,1);
+font-weight: 600;
+font-size: 14px;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+-webkit-transition: background 0.5s;
+-moz-transition: background 0.5s;
+-o-transition: background 0.5s;
+transition: background 0.5s;
+cursor: pointer;
+float: left;
+padding-right: 25px;
+padding-left: 25px;
+}
+.sim-edit-box-buttons-save:hover {
+background-color: rgba(51,175,222,1);
+}
+.sim-edit-box-buttons-cancel{
+height: 33px;
+text-align: center;
+line-height: 33px;
+color: rgba(84,101,122,1);
+font-weight: 600;
+font-size: 14px;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+-webkit-transition: background 0.5s;
+-moz-transition: background 0.5s;
+-o-transition: background 0.5s;
+transition: background 0.5s;
+cursor: pointer;
+border: 1px solid #e4e4e5;
+float: left;
+padding-right: 25px;
+padding-left: 25px;
+margin-left: 25px;
+}
+.sim-edit-box-buttons-cancel:hover {
+background-color: rgba(153,153,153,0.1);
+}
+
+.divdelete {
+height: 20px;
+width: 20px;
+background-color: rgba(230, 14, 14, 0.51);
+top: 0px;
+right: -18px;
+position: absolute;
+color: rgba(102,102,102,1);
+-webkit-transition: all 0.5s;
+-moz-transition: all 0.5s;
+-o-transition: all 0.5s;
+transition: all 0.5s;
+opacity: 0; 
+text-align: center;
+font-size: 14px;
+}
+
+.divdelete:hover {
+background-color: rgba(230, 14, 14, 0.51);
+cursor: pointer;
+color: rgba(255,255,255,1);
+}   
+.ui-draggable:hover .divdelete {
+opacity: 1;
+}
+#newsletter-builder-sidebar-buttons{
+float: left;
+width: 100%;
+margin-top: 20px;
+}
+#newsletter-builder-sidebar-buttons-abutton{
+background-color: rgba(63,141,191,1);
+height: 40px;
+width: 160px;
+float: right;
+margin-right:30px;
+text-align: center;
+line-height: 40px;
+color: rgba(255,255,255,1);
+font-weight: 600;
+font-size: 14px;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+-webkit-transition: background 0.5s;
+-moz-transition: background 0.5s;
+-o-transition: background 0.5s;
+transition: background 0.5s;
+cursor: pointer;
+margin-bottom: 25px;
+}
+#newsletter-builder-sidebar-buttons-abutton:hover {
+background-color: rgba(51,175,222,1);
+}
+#newsletter-builder-sidebar-buttons-bbutton{
+height: 40px;
+width: 160px;
+margin-right: auto;
+margin-left: auto;
+text-align: center;
+line-height: 40px;
+color: rgba(84,101,122,1);
+font-weight: 600;
+font-size: 14px;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+-webkit-transition: background 0.5s;
+-moz-transition: background 0.5s;
+-o-transition: background 0.5s;
+transition: background 0.5s;
+cursor: pointer;
+margin-bottom: 25px;
+border: 1px solid #e4e4e5;
+}
+#newsletter-builder-sidebar-buttons-bbutton:hover {
+background-color: rgba(153,153,153,0.1);
+}
+#newsletter-preloaded-export{
+display:none;
+}
+table tr td .draggable {
+width: 85%;
+height: 125px;
+}
+td{
+width: 50%;
+}
+</style>
+
+    
+</head>
+
+<body>
+<div class="sim-edit" id="sim-edit-title">
+<div class="sim-edit-box">
+<div class ="sim-edit-box-title">Edit Title</div>
+
+<div class="sim-edit-box-content">
+<div class="sim-edit-box-content-text">Title</div>
+<div class="sim-edit-box-content-field">
+    <input type="text" class="sim-edit-box-content-field-input title"/></br>
+    <input type="number" class="sim-edit-box-content-field-input font-size" placeholder="font-size" />
+    <input type="text" class="sim-edit-box-content-field-input font-family" placeholder="font-family" />
+    <input type="text" class="sim-edit-box-content-field-input font-color" placeholder="font-color" />
+    <input type="text" class="sim-edit-box-content-field-input background" placeholder="background-color" />
+    <input type="text" class="sim-edit-box-content-field-input alignment" placeholder="heading-alignmnet" />
+     <input type="number" class="sim-edit-box-content-field-input padding" placeholder="padding" />
+
+</div>
+</div>
+<div class="sim-edit-box-buttons">
+<div class="sim-edit-box-buttons-save">Save</div>
+<div class="sim-edit-box-buttons-cancel">Cancel</div>
+</div>
+</div>
+</div>
+
+<div class="sim-edit" id="sim-edit-text">
+<div class="sim-edit-box" >
+<div class="sim-edit-box-title">Edit Text</div>
+
+<div class="sim-edit-box-content">
+<div class="sim-edit-box-content-text">Text</div>
+<div class="sim-edit-box-content-field"><textarea name="input"  class="sim-edit-box-content-field-textarea text editorial"></textarea></div>
+</div>
+<div class="sim-edit-box-buttons">
+<div class="sim-edit-box-buttons-save">Save</div>
+<div class="sim-edit-box-buttons-cancel">Cancel</div>
+</div>
+</div>
+</div>
+
+<div class="sim-edit" id="sim-edit-image">
+<div class="sim-edit-box" >
+<div class="sim-edit-box-title">Edit Image</div>
+<div class="sim-edit-box-content">
+<div class="sim-edit-box-content-text">URL:<span>(full address including http://)</span></div>
+<div class="sim-edit-box-content-field">
+    <input type="text" class="sim-edit-box-content-field-input image"/></br>
+    <input type="text" class="form-control demo1 colorpicker-element sim-edit-box-content-field-input color" value="#5367ce">
+</div>
+</div>
+<div class="sim-edit-box-buttons">
+<div class="sim-edit-box-buttons-save">Save</div>
+<div class="sim-edit-box-buttons-cancel">Cancel</div>
+</div>
+</div>
+</div>
+    <div class="container-fluid">
+			<div class="row">
+                 <div class="col-lg-3">
+                    <table>
+                        <tr>
+                            <td>
+                            <div  class="draggable  ui-widget-content" id ="drag2">
+                                <div class = "sim-row-edit" data-type = "image">
+                                    <img src ="file:///E:/Static_Full_Version/img/upload.jpg" class = "img-responsive">
+                                </div>
+                            </div>
+                            </td>
+                            <td>
+                                <div  class="draggable  ui-widget-content" id ="drag1">
+                                    <div class = "sim-row-edit" data-type = "title">
+                                        <h2>Company Name</h2>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                       <tr>
+                            <td>
+                            <div  class="draggable  ui-widget-content" id ="drag3" >
+                                <div class = "sim-row-edit" data-type = "form">
+                                    <h2>Mail Text Body</h2>
+                                </div>
+                             </div>
+                            </td>
+                            <td>
+                             <div  class="draggable  ui-widget-content" id ="drag4">
+                                <div class = "sim-row-edit" data-type = "image">
+                                    <img src ="file:///E:/Static_Full_Version/img/dummyproduct.jpg" class = "img-responsive">
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+                        <tr>
+                           <td>
+                            <div  class="draggable  ui-widget-content form" data-type = "form" id ="drag5">
+                                <h2>Mail Form</h2>
+                            </div>
+                            </td>
+                            <td>
+                            <div  class="draggable  ui-widget-content" data-type = "image" id ="drag6">
+                                <img src ="file:///E:/Static_Full_Version/img/upload.jpg" class = "img-responsive">
+                            </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            <div class="draggable  ui-widget-content" data-type = "image" id ="drag7">
+                                 <h2>Heading</h2>
+                            </div>
+                            </td>
+                            <td>
+                            <div class="draggable  ui-widget-content" data-type = "text" id ="drag7">
+                                <h2>Text</h2>
+                            </div>
+                            </td>
+                            
+                        </tr>
+                       
+                    </table>
+           
+                </div>
+                <div class="col-lg-9">
+                    <div id="droppable" class="ui-widget-header">
+                       
+                    </div>
+                </div>
+            </div>
+            
+            </div>
+        </div>
+    </div>
+
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://jqueryui.com/jquery-wp-content/themes/jqueryui.com/style.css">
+  <style>
+  .draggable {  padding: 0.5em; float: left; margin: 10px 10px 10px 0;z-index: 1;}
+  #droppable { width: 95%; height: 1000PX; padding: 1em; float: left; margin: 15px; }
+  </style>
+  <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+   <script src=" https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+ 
+ <script type="text/javascript">
+       // google.load("jquery", "1.11.0");
+        google.load("jqueryui", "1.7.2");
+</script>
+
+<script src="file:///C:/Users/KK/Downloads/CLEditor1_4_5/jquery.cleditor.js"></script>
+<script>
+        $(document).ready(function () { $(".editorial").cleditor({
+
+width:"300px"
+})[0].focus();
+});
+    </script>
+
+<script>
+
+function hover_edit(){
+$(".sim-row-edit").hover(
+
+  function() {
+    $(this).append('<div class="sim-row-edit-hover"><i class="fa fa-pencil" style="line-height:30px;"></i></div>');
+    $(".sim-row-edit-hover").click(function(e) {e.preventDefault()})
+    $(".sim-row-edit-hover i").click(function(e) {
+    e.preventDefault();
+    big_parent = $(this).parent().parent();
+    bigbig_parent =$(this).parent().parent().parent();
+    //edit image
+    if(big_parent.attr("data-type")=='image'){
+    
+    
+    $("#sim-edit-image .image").val(big_parent.children('img').attr("src"));
+
+    $("#sim-edit-image").fadeIn(500);
+    $("#sim-edit-image .sim-edit-box").slideDown(500);
+    
+    $("#sim-edit-image .sim-edit-box-buttons-save").click(function() {
+      $(this).parent().parent().parent().fadeOut(500)
+      $(this).parent().parent().slideUp(500)
+      
+      big_parent.children('img').attr("src",$("#sim-edit-image .image").val());
+      bigbig_parent.css( "background-color",$("#sim-edit-image .color").val());
+
+       });
+
+    }
+    
+    //edit link
+    if(big_parent.attr("data-type")=='link'){
+    
+    $("#sim-edit-link .title h2").val(big_parent.children('h2').text());
+    $("#sim-edit-link .url").val(big_parent.attr("href"));
+    $("#sim-edit-link").fadeIn(500);
+    $("#sim-edit-link .sim-edit-box").slideDown(500);
+    
+    $("#sim-edit-link .sim-edit-box-buttons-save").click(function() {
+      $(this).parent().parent().parent().fadeOut(500)
+      $(this).parent().parent().slideUp(500)
+       
+        big_parent.text($("#sim-edit-link .title").val());
+        big_parent.attr("href",$("#sim-edit-link .url").val());
+
+        });
+
+    }
+    
+    //edit title
+    
+    if(big_parent.attr("data-type")=='title'){
+    
+    $("#sim-edit-title .title").val(big_parent.text());
+    $("#sim-edit-title").fadeIn(500);
+    $("#sim-edit-title .sim-edit-box").slideDown(500);
+    
+    $("#sim-edit-title .sim-edit-box-buttons-save").click(function() {
+      $(this).parent().parent().parent().fadeOut(500)
+      $(this).parent().parent().slideUp(500)
+       
+        big_parent.children('h2').text($("#sim-edit-title .title").val());
+        big_parent.children('h2').css('color',$("#sim-edit-title .font-color").val());
+        big_parent.children('h2').css('font-size',$("#sim-edit-title .font-size").val()+'px');
+        
+        big_parent.children('h2').css('font-family',$("#sim-edit-title .font-family").val());
+        big_parent.children('h2').css('text-align',$("#sim-edit-title .alignment").val());
+        big_parent.parent().css('background',$("#sim-edit-title .background").val());
+        big_parent.parent().css('padding',$("#sim-edit-title .padding").val()+'px');
+        big_parent.parent('h2').css('margin-top',0+'px');
+        big_parent.parent('h2').css('margin-bottom',0+'px');
+        });
+
+    }
+    
+    //edit text
+    if(big_parent.attr("data-type")=='text'){
+    
+    $("#sim-edit-text .text").val(big_parent.text());
+    $("#sim-edit-text").fadeIn(500);
+    $("#sim-edit-text .sim-edit-box").slideDown(500);
+    
+    $("#sim-edit-text .sim-edit-box-buttons-save").click(function() {
+      $(this).parent().parent().parent().fadeOut(500)
+      $(this).parent().parent().slideUp(500)
+       
+        big_parent.html($("#sim-edit-text .text").val());
+        
+        
+       
+        });
+
+    }
+    
+    //edit icon
+    if(big_parent.attr("data-type")=='icon'){
+    
+    
+    $("#sim-edit-icon").fadeIn(500);
+    $("#sim-edit-icon .sim-edit-box").slideDown(500);
+    
+    $("#sim-edit-icon i").click(function() {
+      $(this).parent().parent().parent().parent().fadeOut(500)
+      $(this).parent().parent().parent().slideUp(500)
+       
+        big_parent.children('i').attr('class',$(this).attr('class'));
+
+        });
+
+    }//
+    
+    });
+  }, function() {
+    $(this).children(".sim-row-edit-hover").remove();
+  }
+);
+}
+$(".sim-edit-box-buttons-cancel").click(function() {
+  $(this).parent().parent().parent().fadeOut(500)
+   $(this).parent().parent().slideUp(500)
+});
+
+ $("#newsletter-builder-sidebar-buttons-abutton").click(function(){
+     
+    $("#newsletter-preloaded-export").html($("#droppable").html());
+
+    $("#newsletter-preloaded-export .sim-row-delete").remove();
+    $("#newsletter-preloaded-export .sim-row").removeClass("ui-draggable");
+    $("#newsletter-preloaded-export .sim-row-edit").removeAttr("data-type");
+    $("#newsletter-preloaded-export .sim-row-edit").removeClass("sim-row-edit");
+    
+    export_content = $("#newsletter-preloaded-export").html();
+    alert( export_content);
+    
+     
+});
+
+  $( function() {
+    counter = 0;
+    $( ".draggable" ).draggable({
+        helper: 'clone',
+        containment: 'window',
+         stop:function(ev, ui) {
+                var pos=$(ui.helper).offset();
+
+                objName = "#noclonediv"+counter;
+               // $(objName).css({"left":left,"top":top});
+                //$(objName).removeClass("draggable");
+                $(objName).resizable();
+
+                //$(objName).css('position','relative')
+                //$(objName).css({"top":'auto',"left":'auto'});
+                //$(objName).css('width','125px');
+                //$(objName).css('height','125px');
+                 $(objName).append('<div class="divdelete" >X</div>');
+                    $(".divdelete").click(function() {
+                       $(this).parent().remove();
+                    });
+                hover_edit()
+                //When an existiung object is dragged
+                $(objName).draggable({
+                    containment: 'parent',
+                    stop:function(ev, ui) {
+                        
+                    }
+                });
+            }
+
+    });
+
+    $( "#droppable" ).droppable({
+        
+             drop: function(event, ui) {
+              
+                if (ui.helper.attr('id').search(/drag[0-9]/) != -1){
+
+                   
+                    counter++;
+                    var element=$(ui.draggable).clone();
+                    element.addClass("notempclass");
+                    $(this).append(element);
+                    $(".notempclass").attr("id","noclonediv"+counter);
+                    $("#noclonediv"+counter).removeClass("notempclass");
+
+                    //Get the dynamically item id
+                    draggedNumber = ui.helper.attr('id').search(/drag([0-9])/);
+                    itemDragged = "dragged" + RegExp.$1;
+                    //console.log(itemDragged);
+
+                    $("#noclonediv"+counter).addClass(itemDragged);
+                    if(ui.helper.attr('class') == "form"){
+
+                        $("#noclonediv"+counter). append('<form><input type = "text" ></form>');
+                   }
+                   
+                   
+                }
+            }
+        });
+
+   
+    });
+
+  </script>
+</body>
+
+</html>
